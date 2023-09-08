@@ -1,0 +1,29 @@
+.card-wrapper {
+  margin: 20vh auto;
+  max-width: 600px;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.switch {
+  border: 1px solid grey;
+  padding: 1em;
+  width: 180px;
+}
+
+.switch-left {
+  border-top-left-radius: 30px 30px;
+  border-bottom-left-radius: 30px 30px;
+}
+
+.switch-right {
+  border-top-right-radius: 30px 30px;
+  border-bottom-right-radius: 30px 30px;
+}
+
+.selected-switch {
+  background-color: black;
+  color: white;
+}
