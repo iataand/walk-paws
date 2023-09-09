@@ -5,7 +5,9 @@ import useLandingPage from "../hooks/useLandingPage";
 import SitterSwitch from "../components/SitterSwitch";
 
 export default function LandingPage() {
-  const { onChangeUserdata } = useLandingPage();
+  const { onChangeUserForm, validateForm, userFormData } = useLandingPage();
+
+  console.log(userFormData.errors);
 
   return (
     <Card className="card-wrapper">
@@ -14,13 +16,29 @@ export default function LandingPage() {
       </Typography>
       <SitterSwitch />
 
-      <TextField label="Email" name="email" onChange={onChangeUserdata} />
-      <TextField label="Password" name="password" onChange={onChangeUserdata} />
       <TextField
+        error={!!userFormData.errors?.userEmail}
+        label="Email"
+        name="userEmail"
+        onChange={onChangeUserForm}
+      />
+      <TextField
+        error={!!userFormData.errors?.password}
+        label="Password"
+        name="password"
+        onChange={onChangeUserForm}
+        type="password"
+      />
+      <TextField
+        error={!!userFormData.errors?.confirmPassword}
         label="Confirm Password"
         name="confirmPassword"
-        onChange={onChangeUserdata}
+        onChange={onChangeUserForm}
+        type="password"
       />
+      <Button onClick={validateForm} variant="contained">
+        Register
+      </Button>
 
       <Box className="text-center">
         <Button>

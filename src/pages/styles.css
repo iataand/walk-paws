@@ -24,6 +24,6 @@
 }
 
 .selected-switch {
-  background-color: black;
+  background-color: var(--mui-palette-primary-main);
   color: white;
 }
