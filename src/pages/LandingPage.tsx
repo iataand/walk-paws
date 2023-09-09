@@ -5,7 +5,8 @@ import useLandingPage from "../hooks/useLandingPage";
 import SitterSwitch from "../components/SitterSwitch";
 
 export default function LandingPage() {
-  const { onChangeUserForm, validateForm, userFormData } = useLandingPage();
+  const { onChangeUserForm, validateForm, userFormData, handleClearError } =
+    useLandingPage();
 
   console.log(userFormData.errors);
 
@@ -21,12 +22,14 @@ export default function LandingPage() {
         label="Email"
         name="userEmail"
         onChange={onChangeUserForm}
+        onClick={() => handleClearError("userEmail")}
       />
       <TextField
         error={!!userFormData.errors?.password}
         label="Password"
         name="password"
         onChange={onChangeUserForm}
+        onClick={() => handleClearError("password")}
         type="password"
       />
       <TextField
@@ -34,6 +37,7 @@ export default function LandingPage() {
         label="Confirm Password"
         name="confirmPassword"
         onChange={onChangeUserForm}
+        onClick={() => handleClearError("confirmPassword")}
         type="password"
       />
       <Button onClick={validateForm} variant="contained">

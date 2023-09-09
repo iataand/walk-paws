@@ -6,14 +6,18 @@ type UserFormType = {
     password: string;
     confirmPassword: string;
   };
-  errors?: {
+  errors: {
     userEmail?: string;
     password?: string;
     confirmPassword?: string;
   };
 };
 
-export const validEmail = new RegExp(
+type ErrorsType = UserFormType["errors"];
+
+type FieldNamesType = "userEmail" | "password" | "confirmPassword";
+
+const validEmail = new RegExp(
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
 
@@ -25,6 +29,7 @@ export default function useLandingPage() {
       password: "",
       confirmPassword: "",
     },
+    errors: {},
   });
 
   const onChangeUserForm = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,11 +47,7 @@ export default function useLandingPage() {
 
   const validateForm = () => {
     const { userEmail, password, confirmPassword } = userFormData.values;
-    const errors: {
-      userEmail?: string;
-      password?: string;
-      confirmPassword?: string;
-    } = {};
+    const errors: ErrorsType = {};
 
     if (userEmail === "") {
       errors.userEmail = "Emaill address can't be empty";
@@ -71,6 +72,13 @@ export default function useLandingPage() {
     setUserFormData({ ...userFormData, errors });
   };
 
+  const handleClearError = (fieldName: FieldNamesType) => {
+    const { errors } = userFormData;
+
+    errors[fieldName] && delete errors[fieldName];
+    setUserFormData({ ...userFormData, errors });
+  };
+
   return {
     isSitter,
     setIsSitter,
@@ -79,5 +87,6 @@ export default function useLandingPage() {
     onChangeUserForm,
     changeIsSitter,
     validateForm,
+    handleClearError,
   };
 }
