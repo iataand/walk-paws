@@ -13,6 +13,8 @@ export default function LandingPage() {
     handleClearError,
     isLoading,
     errorsArray,
+    isSitter,
+    changeIsSitter,
   } = useLandingPage();
 
   return (
@@ -20,7 +22,8 @@ export default function LandingPage() {
       <Typography variant="h3" className="text-center">
         WalkPaws
       </Typography>
-      <SitterSwitch />
+
+      <SitterSwitch isSitter={isSitter} changeIsSitter={changeIsSitter} />
 
       <TextField
         error={!!userFormData.errors?.userEmail}
@@ -45,7 +48,12 @@ export default function LandingPage() {
         onClick={() => handleClearError("confirmPassword")}
         type="password"
       />
-      <Button disabled={isLoading} onClick={validateForm} variant="contained">
+      <Button
+        name="registerButton"
+        disabled={isLoading}
+        onClick={validateForm}
+        variant="contained"
+      >
         Register
       </Button>
 

@@ -1,9 +1,11 @@
 import { Box, Typography } from "@mui/material";
-import useLandingPage from "../hooks/useLandingPage";
 
-export default function SitterSwitch() {
-  const { isSitter, changeIsSitter } = useLandingPage();
+type PropTypes = {
+  isSitter: boolean;
+  changeIsSitter: (value: boolean) => void;
+};
 
+export default function SitterSwitch({ isSitter, changeIsSitter }: PropTypes) {
   return (
     <Box className="flex justify-center cursor-pointer ">
       <Typography

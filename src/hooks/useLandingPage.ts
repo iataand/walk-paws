@@ -71,7 +71,7 @@ export default function useLandingPage() {
     }
 
     if (!confirmPassword) {
-      errors.confirmPassword = "Password can't be empty";
+      errors.confirmPassword = "Confirm password can't be empty";
     }
 
     if (password && confirmPassword && password !== confirmPassword) {
