@@ -1,21 +1,19 @@
 import { useState } from "react";
+import {
+  ErrorsType,
+  FieldNamesType,
+  UserFormType,
+} from "../types/landingPageTypes";
 
-type UserFormType = {
-  values: {
-    userEmail: string;
-    password: string;
-    confirmPassword: string;
-  };
-  errors: {
-    userEmail?: string;
-    password?: string;
-    confirmPassword?: string;
-  };
+const userNameInUse = function () {
+  //Promise that simulates backend call for email taken error after 1 second delay
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("Email adress already in use");
+    }, 1000);
+  });
 };
-
-type ErrorsType = UserFormType["errors"];
-
-type FieldNamesType = "userEmail" | "password" | "confirmPassword";
 
 const validEmail = new RegExp(
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -31,6 +29,8 @@ export default function useLandingPage() {
     },
     errors: {},
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorsArray, setErrorsArray] = useState<string[]>([]);
 
   const onChangeUserForm = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -45,12 +45,25 @@ export default function useLandingPage() {
     setIsSitter(isSitter);
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const { userEmail, password, confirmPassword } = userFormData.values;
     const errors: ErrorsType = {};
+    setErrorsArray([]);
 
     if (userEmail === "") {
       errors.userEmail = "Emaill address can't be empty";
+    }
+
+    if (userEmail && !validEmail.test(userEmail)) {
+      errors.userEmail = "Invalid email address";
+    }
+
+    if (userEmail && validEmail.test(userEmail)) {
+      setIsLoading(true);
+      const isEmailInUse = await userNameInUse();
+      setIsLoading(false);
+
+      isEmailInUse && (errors.userEmail = "Email address already in use");
     }
 
     if (!password) {
@@ -61,15 +74,12 @@ export default function useLandingPage() {
       errors.confirmPassword = "Password can't be empty";
     }
 
-    if (userEmail && !validEmail.test(userEmail)) {
-      errors.userEmail = "Invalid email address";
-    }
-
     if (password && confirmPassword && password !== confirmPassword) {
       errors.confirmPassword = "Passwords don't match";
     }
 
     setUserFormData({ ...userFormData, errors });
+    Object.values(errors).length > 0 && setErrorsArray(Object.values(errors));
   };
 
   const handleClearError = (fieldName: FieldNamesType) => {
@@ -88,5 +98,7 @@ export default function useLandingPage() {
     changeIsSitter,
     validateForm,
     handleClearError,
+    isLoading,
+    errorsArray,
   };
 }

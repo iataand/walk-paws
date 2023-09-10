@@ -3,12 +3,17 @@ import GoogleIcon from "@mui/icons-material/Google";
 import "./styles.css";
 import useLandingPage from "../hooks/useLandingPage";
 import SitterSwitch from "../components/SitterSwitch";
+import ErrorAlerts from "../components/ErrorAlerts";
 
 export default function LandingPage() {
-  const { onChangeUserForm, validateForm, userFormData, handleClearError } =
-    useLandingPage();
-
-  console.log(userFormData.errors);
+  const {
+    onChangeUserForm,
+    validateForm,
+    userFormData,
+    handleClearError,
+    isLoading,
+    errorsArray,
+  } = useLandingPage();
 
   return (
     <Card className="card-wrapper">
@@ -40,9 +45,11 @@ export default function LandingPage() {
         onClick={() => handleClearError("confirmPassword")}
         type="password"
       />
-      <Button onClick={validateForm} variant="contained">
+      <Button disabled={isLoading} onClick={validateForm} variant="contained">
         Register
       </Button>
+
+      <ErrorAlerts errorsArray={errorsArray} />
 
       <Box className="text-center">
         <Button>

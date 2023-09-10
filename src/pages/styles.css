@@ -1,5 +1,5 @@
 .card-wrapper {
-  margin: 20vh auto;
+  margin: 10vh auto;
   max-width: 600px;
   padding: 2em;
   display: flex;
@@ -26,4 +26,10 @@
 .selected-switch {
   background-color: var(--mui-palette-primary-main);
   color: white;
+}
+
+.test {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
 }
