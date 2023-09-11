@@ -7,9 +7,6 @@ import "@testing-library/jest-dom";
 import LandingPage from "./pages/LandingPage";
 
 const clickRegisterButton = () => {
-  screen.getByRole("button", {
-    name: /register/i,
-  });
   const registerButton = screen.getByRole("button", {
     name: /register/i,
   });
@@ -47,7 +44,7 @@ describe("LandingPage", () => {
 
       it('should display "empty email" error message', () => {
         const errorEmptyEmail = screen.getByText(
-          "Emaill address can't be empty"
+          "Email address can't be empty"
         );
         expect(errorEmptyEmail).toBeInTheDocument();
       });

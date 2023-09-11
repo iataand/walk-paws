@@ -53,7 +53,7 @@ export default function useLandingPage() {
     setErrorsArray([]);
 
     if (userEmail === "") {
-      errors.userEmail = "Emaill address can't be empty";
+      errors.userEmail = "Email address can't be empty";
     }
 
     if (userEmail && !validEmail.test(userEmail)) {
@@ -65,7 +65,7 @@ export default function useLandingPage() {
       const isEmailInUse = await userNameInUse();
       setIsLoading(false);
 
-      isEmailInUse && (errors.userEmail = "Email address already in use");
+      !isEmailInUse && (errors.userEmail = "Email address already in use");
     }
 
     if (!password) {
