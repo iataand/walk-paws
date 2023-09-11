@@ -4,7 +4,7 @@ module.exports = {
     "^.+\\.(ts|tsx)?$": "ts-jest",
     "^.+\\.(js|jsx)$": "babel-jest",
   },
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   verbose: true,
   transform: {
     "^.+\\.ts?$": "ts-jest",

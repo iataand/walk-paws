@@ -14,7 +14,7 @@ export default function LandingPage() {
     isLoading,
     errorsArray,
     isSitter,
-    changeIsSitter,
+    setIsSitter,
   } = useLandingPage();
 
   return (
@@ -23,14 +23,13 @@ export default function LandingPage() {
         WalkPaws
       </Typography>
 
-      <SitterSwitch isSitter={isSitter} changeIsSitter={changeIsSitter} />
+      <SitterSwitch isSitter={isSitter} setIsSitter={setIsSitter} />
 
       <TextField
         error={!!userFormData.errors?.userEmail}
         label="Email"
         name="userEmail"
         onChange={onChangeUserForm}
-        onClick={() => handleClearError("userEmail")}
       />
       <TextField
         error={!!userFormData.errors?.password}

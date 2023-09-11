@@ -34,15 +34,17 @@ export default function useLandingPage() {
 
   const onChangeUserForm = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    const { errors } = userFormData;
+
+    if (errors.hasOwnProperty(name)) {
+      delete errors[name as keyof typeof errors];
+    }
 
     setUserFormData({
       ...userFormData,
       values: { ...userFormData.values, [name]: value },
+      ...errors,
     });
-  };
-
-  const changeIsSitter = (isSitter: boolean) => {
-    setIsSitter(isSitter);
   };
 
   const validateForm = async () => {
@@ -95,7 +97,6 @@ export default function useLandingPage() {
     userFormData,
     setUserFormData,
     onChangeUserForm,
-    changeIsSitter,
     validateForm,
     handleClearError,
     isLoading,
