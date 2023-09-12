@@ -1,23 +1,13 @@
 import { useState } from "react";
-import {
-  ErrorsType,
-  FieldNamesType,
-  UserFormType,
-} from "../types/landingPageTypes";
+import { ErrorsType, UserFormType } from "../types/landingPageTypes";
+import { createUser } from "../auth/createUser";
+import { FirebaseError } from "firebase/app";
 
-const userNameInUse = function () {
-  //Promise that simulates backend call for email taken error after 1 second delay
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("Email adress already in use");
-    }, 1000);
-  });
+const AUTH_ERROR_CODES = {
+  INVALID_EMAIL: "auth/invalid-email",
+  EMAIL_TAKEN: "auth/email-already-in-use",
+  INVALID_PASSWORD: "auth/weak-password",
 };
-
-const validEmail = new RegExp(
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-);
 
 export default function useLandingPage() {
   const [isSitter, setIsSitter] = useState(false);
@@ -30,7 +20,6 @@ export default function useLandingPage() {
     errors: {},
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [errorsArray, setErrorsArray] = useState<string[]>([]);
 
   const onChangeUserForm = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -47,25 +36,64 @@ export default function useLandingPage() {
     });
   };
 
+  const loginWithEmailAndPassword = async () => {
+    const { userEmail, password } = userFormData.values;
+
+    const handleEmailAlreadyInUse = () => {
+      setUserFormData({
+        ...userFormData,
+        errors: {
+          ...userFormData.errors,
+          userEmail: "Email address already  in use",
+        },
+      });
+    };
+
+    const handleInvalidEmail = () => {
+      setUserFormData({
+        ...userFormData,
+        errors: {
+          ...userFormData.errors,
+          userEmail: "Invalid email address",
+        },
+      });
+    };
+
+    const handleInvalidPassword = () => {
+      setUserFormData({
+        ...userFormData,
+        errors: {
+          ...userFormData.errors,
+          password: "Password must contain at least six characters",
+        },
+      });
+    };
+
+    setIsLoading(true);
+    try {
+      await createUser(userEmail, password);
+    } catch (e) {
+      const typedError = e as FirebaseError;
+
+      if (typedError.code === AUTH_ERROR_CODES.EMAIL_TAKEN) {
+        handleEmailAlreadyInUse();
+      } else if (typedError.code === AUTH_ERROR_CODES.INVALID_EMAIL) {
+        handleInvalidEmail();
+      } else if (typedError.code === AUTH_ERROR_CODES.INVALID_PASSWORD) {
+        handleInvalidPassword();
+      } else {
+        console.error("something went wrong...");
+      }
+    }
+    setIsLoading(false);
+  };
+
   const validateForm = async () => {
     const { userEmail, password, confirmPassword } = userFormData.values;
     const errors: ErrorsType = {};
-    setErrorsArray([]);
 
     if (userEmail === "") {
       errors.userEmail = "Email address can't be empty";
-    }
-
-    if (userEmail && !validEmail.test(userEmail)) {
-      errors.userEmail = "Invalid email address";
-    }
-
-    if (userEmail && validEmail.test(userEmail)) {
-      setIsLoading(true);
-      const isEmailInUse = await userNameInUse();
-      setIsLoading(false);
-
-      !isEmailInUse && (errors.userEmail = "Email address already in use");
     }
 
     if (!password) {
@@ -81,14 +109,10 @@ export default function useLandingPage() {
     }
 
     setUserFormData({ ...userFormData, errors });
-    Object.values(errors).length > 0 && setErrorsArray(Object.values(errors));
-  };
 
-  const handleClearError = (fieldName: FieldNamesType) => {
-    const { errors } = userFormData;
-
-    errors[fieldName] && delete errors[fieldName];
-    setUserFormData({ ...userFormData, errors });
+    if (Object.values(errors).length === 0) {
+      loginWithEmailAndPassword();
+    }
   };
 
   return {
@@ -98,8 +122,6 @@ export default function useLandingPage() {
     setUserFormData,
     onChangeUserForm,
     validateForm,
-    handleClearError,
     isLoading,
-    errorsArray,
   };
 }

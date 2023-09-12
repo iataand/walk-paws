@@ -10,9 +10,7 @@ export default function LandingPage() {
     onChangeUserForm,
     validateForm,
     userFormData,
-    handleClearError,
     isLoading,
-    errorsArray,
     isSitter,
     setIsSitter,
   } = useLandingPage();
@@ -36,7 +34,6 @@ export default function LandingPage() {
         label="Password"
         name="password"
         onChange={onChangeUserForm}
-        onClick={() => handleClearError("password")}
         type="password"
       />
       <TextField
@@ -44,7 +41,6 @@ export default function LandingPage() {
         label="Confirm Password"
         name="confirmPassword"
         onChange={onChangeUserForm}
-        onClick={() => handleClearError("confirmPassword")}
         type="password"
       />
       <Button
@@ -56,7 +52,7 @@ export default function LandingPage() {
         Register
       </Button>
 
-      <ErrorAlerts errorsArray={errorsArray} />
+      <ErrorAlerts errorsArray={Object.values(userFormData.errors)} />
 
       <Box className="text-center">
         <Button>
