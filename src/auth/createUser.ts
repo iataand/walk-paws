@@ -1,17 +1,19 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "../../firebase";
 
 export const createUser = function (email: string, password: string) {
   return createUserWithEmailAndPassword(auth, email, password);
-  // .then((userCredential) => {
-  //   const user = userCredential.user;
-  //   alert(user);
-  // })
-  // .catch((error) => {
-  //   console.log(error);
-  //   const errorCode = error.code;
-  //   const errorMessage = error.message;
-  //   console.error({ errorCode, errorMessage });
-  //   // ..
-  // });
+};
+
+export const loginUser = function (email: string, password: string) {
+  return signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signInWithGoogle = function () {
+  return signInWithPopup(auth, new GoogleAuthProvider());
 };

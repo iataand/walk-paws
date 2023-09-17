@@ -62,18 +62,26 @@ describe("LandingPage", () => {
       });
     });
 
-    describe("register with invalid email address", () => {
+    describe("register with invalid email address", async () => {
       beforeEach(() => {
         const emailInput = screen.getByLabelText("Email");
         fireEvent.change(emailInput, {
-          target: { value: "invalid email address" },
+          target: { value: "invalidemail" },
+        });
+        const passwordInput = screen.getByLabelText("Password");
+        fireEvent.change(passwordInput, {
+          target: { value: "pass123123" },
+        });
+        const confirmPassword = screen.getByLabelText("Confirm Password");
+        fireEvent.change(confirmPassword, {
+          target: { value: "pass123123" },
         });
 
         clickRegisterButton();
       });
 
-      it('should display "invalid email address" error message', () => {
-        const invalidEmailAddress = screen.getByText("Invalid email address");
+      test('should display "invalid email address" error message', async () => {
+        const invalidEmailAddress = screen.findByText(/Invalid email address/i);
         expect(invalidEmailAddress).toBeInTheDocument();
       });
     });

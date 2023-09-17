@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ErrorsType, UserFormType } from "../types/landingPageTypes";
-import { createUser } from "../auth/createUser";
+import { createUser, loginUser } from "../auth/createUser";
 import { FirebaseError } from "firebase/app";
+import { useNavigate } from "react-router-dom";
 
 const AUTH_ERROR_CODES = {
   INVALID_EMAIL: "auth/invalid-email",
@@ -20,6 +21,10 @@ export default function useLandingPage() {
     errors: {},
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [loginOrRegister, setLoginOrRegister] = useState<"login" | "register">(
+    "login"
+  );
+  const navigate = useNavigate();
 
   const onChangeUserForm = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -36,7 +41,7 @@ export default function useLandingPage() {
     });
   };
 
-  const loginWithEmailAndPassword = async () => {
+  const registerWithEmailAndPassword = async () => {
     const { userEmail, password } = userFormData.values;
 
     const handleEmailAlreadyInUse = () => {
@@ -88,6 +93,36 @@ export default function useLandingPage() {
     setIsLoading(false);
   };
 
+  const loginWithEmailAndPassword = async () => {
+    const { userEmail, password } = userFormData.values;
+
+    setIsLoading(true);
+    try {
+      await loginUser(userEmail, password);
+    } catch (e) {
+      const typedError = e as FirebaseError;
+      console.log(typedError);
+    }
+    setIsLoading(false);
+
+    navigate("/createProfile", { state: { userType: "sitter" } });
+  };
+
+  const handleLoginSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.checked
+      ? setLoginOrRegister("login")
+      : setLoginOrRegister("register");
+
+    setUserFormData({
+      values: {
+        userEmail: "",
+        password: "",
+        confirmPassword: "",
+      },
+      errors: {},
+    });
+  };
+
   const validateForm = async () => {
     const { userEmail, password, confirmPassword } = userFormData.values;
     const errors: ErrorsType = {};
@@ -100,7 +135,7 @@ export default function useLandingPage() {
       errors.password = "Password can't be empty";
     }
 
-    if (!confirmPassword) {
+    if (!confirmPassword && loginOrRegister === "register") {
       errors.confirmPassword = "Confirm password can't be empty";
     }
 
@@ -111,7 +146,9 @@ export default function useLandingPage() {
     setUserFormData({ ...userFormData, errors });
 
     if (Object.values(errors).length === 0) {
-      loginWithEmailAndPassword();
+      loginOrRegister === "login"
+        ? loginWithEmailAndPassword()
+        : registerWithEmailAndPassword();
     }
   };
 
@@ -123,5 +160,8 @@ export default function useLandingPage() {
     onChangeUserForm,
     validateForm,
     isLoading,
+    loginOrRegister,
+    setLoginOrRegister,
+    handleLoginSwitch,
   };
 }

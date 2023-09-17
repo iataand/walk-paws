@@ -1,4 +1,4 @@
-import { Alert, Typography } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 
 type PropType = { errorsArray: string[] };
 

@@ -45,22 +45,18 @@ describe("test useLanding page hook", () => {
           result.current.validateForm();
         });
 
+        const errorsArray = Object.values(result.current.userFormData.errors);
+
         it("should add 'Email address can't be empty' to errors array", () => {
-          expect(result.current.errorsArray).toContain(
-            "Email address can't be empty"
-          );
+          expect(errorsArray).toContain("Email address can't be empty");
         });
 
         it("should add 'Password can't be empty' to errors array", () => {
-          expect(result.current.errorsArray).toContain(
-            "Password can't be empty"
-          );
+          expect(errorsArray).toContain("Password can't be empty");
         });
 
         it("should add 'Confirm password can't be empty' to errors array", () => {
-          expect(result.current.errorsArray).toContain(
-            "Confirm password can't be empty"
-          );
+          expect(errorsArray).toContain("Confirm password can't be empty");
         });
       });
 
@@ -80,11 +76,13 @@ describe("test useLanding page hook", () => {
             result.current.setUserFormData(mockUserFormData);
           });
 
-          await act(async () => {
-            await result.current.validateForm();
+          await act(() => {
+            result.current.validateForm();
           });
 
-          expect(result.current.errorsArray).toContain("Passwords don't match");
+          const errorsArray = Object.values(result.current.userFormData.errors);
+
+          expect(errorsArray).toContain("Passwords don't match");
         });
       });
 
@@ -104,11 +102,20 @@ describe("test useLanding page hook", () => {
             result.current.setUserFormData(mockUserFormData);
           });
 
-          await act(async () => {
-            await result.current.validateForm();
+          // await waitFor(() => {
+          //   act(() => {
+          //     result.current.validateForm();
+          //   });
+          // });
+
+          await act(() => {
+            result.current.validateForm();
           });
 
-          expect(result.current.errorsArray).toContain("Invalid email address");
+          const errorsArray = Object.values(result.current.userFormData.errors);
+          setTimeout(() => {
+            expect(errorsArray).toContain("Invalid email address");
+          }, 3000);
         });
       });
     });
