@@ -1,29 +1,11 @@
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Card,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-// import { useLocation } from "react-router-dom"; // TO-DO get sitter/client state from url params
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import SitterSwitch from "../components/SitterSwitch";
 import { useCreateProfile } from "../hooks/useCreateProfile";
+import BreedSelection from "../components/BreedSelection";
 
 export default function CreateProfile() {
-  const {
-    isWeightInKg,
-    setIseWeightInKg,
-    handleChangeDogProfileData,
-    dogProfileData,
-    handleChangeDogBreed,
-    data,
-    status,
-    subBreeds,
-    handleChangeSubBreed,
-  } = useCreateProfile();
+  const { isWeightInKg, setIseWeightInKg, handleChangeDogProfileData } =
+    useCreateProfile();
 
   return (
     <Card className="m-auto mt-[15vh] max-w-[1200px] p-8">
@@ -40,37 +22,7 @@ export default function CreateProfile() {
             fullWidth
           />
 
-          <Box className="flex gap-2">
-            {status === "loading" ? (
-              <>loading...</>
-            ) : (
-              <Autocomplete
-                onChange={(_, value) => handleChangeDogBreed(value)}
-                options={Object.keys(data.message)}
-                fullWidth
-                renderInput={(params) => (
-                  <TextField {...params} label="Dog Breeds" />
-                )}
-              />
-            )}
-
-            {subBreeds?.length > 0 && (
-              <>
-                Sub Breed:
-                <Select
-                  value={dogProfileData.subBreed || ""}
-                  onChange={(e) => handleChangeSubBreed(e.target.value)}
-                  fullWidth
-                >
-                  {subBreeds.map((subBreed, index) => (
-                    <MenuItem key={`${index}-${subBreed}`} value={subBreed}>
-                      {subBreed}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </>
-            )}
-          </Box>
+          <BreedSelection />
 
           <Box className="flex gap-6">
             <TextField
@@ -109,6 +61,7 @@ export default function CreateProfile() {
             className="h-[159px] border p-2"
           />
         </Box>
+
         <Box className="h-[600px] w-full border border-red-400">
           image goes here
         </Box>
