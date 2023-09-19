@@ -1,5 +1,14 @@
-import { Box, Button, Card, TextField, Typography } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Card,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+// import { useLocation } from "react-router-dom"; // TO-DO get sitter/client state from url params
 import SitterSwitch from "../components/SitterSwitch";
 import { useCreateProfile } from "../hooks/useCreateProfile";
 
@@ -7,11 +16,15 @@ export default function CreateProfile() {
   const {
     isWeightInKg,
     setIseWeightInKg,
-    dogProfileData,
     handleChangeDogProfileData,
+    dogProfileData,
+    handleChangeDogBreed,
+    data,
+    status,
+    subBreeds,
+    handleChangeSubBreed,
   } = useCreateProfile();
 
-  console.log(dogProfileData);
   return (
     <Card className="m-auto mt-[15vh] max-w-[1200px] p-8">
       <Typography className="py-8 text-center" variant="h4">
@@ -26,12 +39,39 @@ export default function CreateProfile() {
             label="Dog name"
             fullWidth
           />
-          <TextField
-            name="breed"
-            onChange={handleChangeDogProfileData}
-            label="Dog breed"
-            fullWidth
-          />
+
+          <Box className="flex gap-2">
+            {status === "loading" ? (
+              <>loading...</>
+            ) : (
+              <Autocomplete
+                onChange={(_, value) => handleChangeDogBreed(value)}
+                options={Object.keys(data.message)}
+                fullWidth
+                renderInput={(params) => (
+                  <TextField {...params} label="Dog Breeds" />
+                )}
+              />
+            )}
+
+            {subBreeds?.length > 0 && (
+              <>
+                Sub Breed:
+                <Select
+                  value={dogProfileData.subBreed || ""}
+                  onChange={(e) => handleChangeSubBreed(e.target.value)}
+                  fullWidth
+                >
+                  {subBreeds.map((subBreed, index) => (
+                    <MenuItem key={`${index}-${subBreed}`} value={subBreed}>
+                      {subBreed}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </>
+            )}
+          </Box>
+
           <Box className="flex gap-6">
             <TextField
               name="age"
