@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBreeds } from "../api/getDogBreeds";
+import { SelectChangeEvent } from "@mui/material";
 
 type DogProfileData = {
   name: string;
@@ -25,6 +26,9 @@ export const useCreateProfile = function () {
     description: "",
   });
   const [subBreeds, setSubBreeds] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<Blob | MediaSource | null>(
+    null
+  );
 
   const { data, error, status } = useQuery({
     queryKey: ["dogBreeds"],
@@ -48,7 +52,7 @@ export const useCreateProfile = function () {
 
       setDogProfileData(dogDataCopy);
     }
-  }, [dogProfileData]);
+  }, [dogProfileData.breed]);
 
   const handleChangeDogProfileData = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -69,6 +73,12 @@ export const useCreateProfile = function () {
     setDogProfileData({ ...dogProfileData, subBreed: value || "" });
   };
 
+  const handleChangeTemperament = (event: SelectChangeEvent<string>) => {
+    const { value } = event.target;
+
+    setDogProfileData({ ...dogProfileData, temperament: value || "" });
+  };
+
   return {
     isWeightInKg,
     setIseWeightInKg,
@@ -80,5 +90,8 @@ export const useCreateProfile = function () {
     status,
     subBreeds,
     handleChangeSubBreed,
+    handleChangeTemperament,
+    selectedImage,
+    setSelectedImage,
   };
 };
