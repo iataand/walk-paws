@@ -1,16 +1,23 @@
 import { Autocomplete, Box, MenuItem, Select, TextField } from "@mui/material";
-import { useCreateProfile } from "../hooks/useCreateProfile";
+import { DogProfileData } from "../types/createProfileTypes";
 
-export default function BreedSelection() {
-  const {
-    handleChangeDogBreed,
-    handleChangeSubBreed,
-    subBreeds,
-    status,
-    data,
-    dogProfileData,
-  } = useCreateProfile();
+type PropTypes = {
+  handleChangeDogBreed: (value: string | null) => void;
+  handleChangeSubBreed: (value: string) => void;
+  dogProfileData: DogProfileData;
+  subBreeds: string[];
+  data: { message: string[]; status: string };
+  status: string;
+};
 
+export default function BreedSelection({
+  handleChangeDogBreed,
+  handleChangeSubBreed,
+  dogProfileData,
+  subBreeds,
+  data,
+  status,
+}: PropTypes) {
   return (
     <Box className="flex gap-2">
       {status === "loading" ? (

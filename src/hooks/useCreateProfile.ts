@@ -2,17 +2,10 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBreeds } from "../api/getDogBreeds";
 import { SelectChangeEvent } from "@mui/material";
-
-type DogProfileData = {
-  name: string;
-  breed: string;
-  subBreed?: string;
-  age: number | null;
-  weight: number | null;
-  weightUnit: "kg" | "lbs";
-  temperament: string;
-  description: string;
-};
+import { createDogProfile, createImageURL } from "../api/createDogProfile";
+import { DogProfileData } from "../types/createProfileTypes";
+import { auth, storage } from "../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const useCreateProfile = function () {
   const [isWeightInKg, setIseWeightInKg] = useState(true);
@@ -62,7 +55,7 @@ export const useCreateProfile = function () {
     setDogProfileData({ ...dogProfileData, [name]: value });
   };
 
-  const handleChangeDogBreed = (value: string | null) => {
+  const handleChangeDogBreed = (value: any) => {
     setDogProfileData({
       ...dogProfileData,
       breed: value || "",
@@ -73,10 +66,60 @@ export const useCreateProfile = function () {
     setDogProfileData({ ...dogProfileData, subBreed: value || "" });
   };
 
-  const handleChangeTemperament = (event: SelectChangeEvent<string>) => {
-    const { value } = event.target;
+  const handleChangeTemperament = (e: SelectChangeEvent<string>) => {
+    const { value } = e.target;
 
     setDogProfileData({ ...dogProfileData, temperament: value || "" });
+  };
+
+  const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files as FileList;
+    setSelectedImage(selectedFiles[0]);
+  };
+
+  const handleDeletePicture = () => {
+    selectedImage && setSelectedImage(null);
+  };
+
+  const handleCreateProfile = async () => {
+    const imageUrl = await createImageURL(selectedImage as File);
+
+    await createDogProfile(
+      dogProfileData.name,
+      dogProfileData.breed,
+      dogProfileData.description,
+      dogProfileData.temperament,
+      dogProfileData.weight,
+      dogProfileData.age,
+      dogProfileData.weightUnit,
+      imageUrl
+    );
+  };
+
+  const validateProfileData = () => {
+    if (!dogProfileData.name) {
+      return false;
+    }
+    if (!dogProfileData.breed) {
+      return false;
+    }
+    if (!dogProfileData.description) {
+      return false;
+    }
+    if (!dogProfileData.temperament) {
+      return false;
+    }
+    if (!dogProfileData.weight) {
+      return false;
+    }
+    if (!dogProfileData.age) {
+      return false;
+    }
+    if (!selectedImage) {
+      return false;
+    }
+
+    return true;
   };
 
   return {
@@ -93,5 +136,9 @@ export const useCreateProfile = function () {
     handleChangeTemperament,
     selectedImage,
     setSelectedImage,
+    handleChangeImage,
+    handleDeletePicture,
+    handleCreateProfile,
+    validateProfileData,
   };
 };

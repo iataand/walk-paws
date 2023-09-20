@@ -10,8 +10,6 @@ import {
 import SitterSwitch from "../components/SitterSwitch";
 import { useCreateProfile } from "../hooks/useCreateProfile";
 import BreedSelection from "../components/BreedSelection";
-import { createDogProfile } from "../api/createDogProfile";
-import { auth } from "../../firebase";
 
 export default function CreateProfile() {
   const {
@@ -21,18 +19,16 @@ export default function CreateProfile() {
     handleChangeTemperament,
     dogProfileData,
     selectedImage,
-    setSelectedImage,
+    handleChangeImage,
+    handleDeletePicture,
+    handleCreateProfile,
+    data,
+    handleChangeDogBreed,
+    handleChangeSubBreed,
+    subBreeds,
+    status,
+    validateProfileData,
   } = useCreateProfile();
-
-  const handleCreateProfile = async () => {
-    await createDogProfile(
-      "test",
-      "bichon2",
-      "description",
-      "temperametn",
-      100
-    );
-  };
 
   return (
     <Card className="m-auto mt-[15vh] max-w-[1200px] p-8">
@@ -49,7 +45,14 @@ export default function CreateProfile() {
             fullWidth
           />
 
-          <BreedSelection />
+          <BreedSelection
+            dogProfileData={dogProfileData}
+            data={data}
+            status={status}
+            handleChangeDogBreed={handleChangeDogBreed}
+            handleChangeSubBreed={handleChangeSubBreed}
+            subBreeds={subBreeds}
+          />
 
           <Box className="flex gap-6">
             <TextField
@@ -102,19 +105,21 @@ export default function CreateProfile() {
               <img alt="not found" src={URL.createObjectURL(selectedImage)} />
             </>
           )}
-          <TextField
-            type="file"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const selectedFiles = e.target.files as FileList;
-              console.log("here");
-              setSelectedImage(selectedFiles[0]);
-            }}
-          />
+          <Box className="flex">
+            <TextField type="file" onChange={handleChangeImage} />
+            <Button variant="outlined" onClick={handleDeletePicture}>
+              X
+            </Button>
+          </Box>
         </Box>
       </Box>
 
       <Box className="pt-8 text-center">
-        <Button variant="contained" onClick={handleCreateProfile}>
+        <Button
+          variant="contained"
+          onClick={handleCreateProfile}
+          disabled={!validateProfileData()}
+        >
           Create Profile
         </Button>
       </Box>
